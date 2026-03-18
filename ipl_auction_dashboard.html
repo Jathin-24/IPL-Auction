@@ -14,448 +14,533 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #FDB813; /* Gold */
-            --secondary: #002D62; /* Midnight Blue */
-            --accent: #E31D23; /* Vibrant Red */
-            --glass: rgba(255, 255, 255, 0.05);
+            --primary: #FFD700; /* Gold */
+            --secondary: #0A192F; /* Deep Navy */
+            --accent: #E31D23; /* IPL Red */
+            --glass: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.1);
         }
         body {
             font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at top right, #001a35, #000c19);
+            background: #050A18;
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
         }
-        .bebas { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: 1px; }
+        .bebas { font-family: 'Bebas Neue', cursive; letter-spacing: 1px; }
+        
         .glass-card {
             background: var(--glass);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
-        .neon-glow {
-            box-shadow: 0 0 15px var(--primary);
+
+        .neon-gold {
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
-        .gold-text {
-            background: linear-gradient(90deg, #FDB813, #FFD700);
+
+        .gold-bg-text {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        input, select {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            color: white;
-            border-radius: 8px;
-            padding: 10px 15px;
+
+        .action-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
-        input:focus {
+
+        .action-button:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        input, select {
+            background: #1A2235 !important;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            color: #FFFFFF !important;
+            border-radius: 12px;
+            padding: 12px 18px;
+            transition: all 0.3s;
+            appearance: none; /* Add custom arrow later if needed */
+        }
+        
+        option {
+            background-color: #0A192F;
+            color: white;
+        }
+
+        input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 5px var(--primary);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
         }
-        button {
-            transition: all 0.3s ease;
-        }
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            filter: brightness(1.2);
-        }
-        button:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-        .player-badge {
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 12px;
+
+        .action-btn-solid {
+            background: var(--primary);
+            color: #050A18;
+            font-weight: 900;
             text-transform: uppercase;
-            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
         }
-        .role-bat { background: #b91c1c; }
-        .role-bowl { background: #15803d; }
-        .role-ar { background: #1d4ed8; }
-        .role-wk { background: #ea580c; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        
+        .action-btn-outline {
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .player-badge {
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Role specific colors */
+        .role-bowler { background: linear-gradient(135deg, #10B981, #059669); }
+        .role-batsman { background: linear-gradient(135deg, #EF4444, #DC2626); }
+        .role-allrounder { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+        .role-wk { background: linear-gradient(135deg, #F59E0B, #D97706); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+
+        .team-card {
+            transition: all 0.4s;
+            border-left: 4px solid transparent;
+        }
+        .team-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-left-color: var(--primary);
+        }
+
+        @keyframes sold-flash {
+            0% { transform: scale(0.5); opacity: 0; filter: blur(20px); }
+            20% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
+            80% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; filter: blur(20px); }
+        }
+        .sold-overlay {
+            animation: sold-flash 1s forwards cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+        .pulse-gold { animation: pulse-gold 2s infinite; }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div id="app" class="max-w-7xl mx-auto hidden">
-        <!-- HEADER -->
-        <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-800">
-            <div>
-                <h1 class="bebas text-4xl gold-text">IPL AUCTION 2026</h1>
-                <p class="text-xs text-gray-400 opacity-60">COLLEGE EVENT CONSOLE</p>
-            </div>
-            <div class="flex gap-4">
-                <button onclick="toggleSetup()" class="p-2 glass-card hover:bg-gray-800" title="Setup Teams">
-                    <i data-lucide="settings"></i>
-                </button>
-                <button onclick="exportData()" class="p-2 glass-card hover:bg-gray-800" title="Export Results">
-                    <i data-lucide="download"></i>
-                </button>
-                <button onclick="resetAll()" class="p-2 glass-card hover:bg-red-900 border-red-900/50" title="Reset All">
-                    <i data-lucide="trash-2"></i>
-                </button>
-            </div>
-        </header>
+<body class="p-4 md:p-6 lg:p-8">
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- LEFT: TEAMS LIST -->
-            <div class="lg:col-span-3 space-y-4">
-                <h2 class="bebas gold-text text-2xl mb-4">LEADERBOARD</h2>
-                <div id="teams-list" class="space-y-3">
+    <div id="app" class="max-w-[1600px] mx-auto hidden">
+        <!-- TOP NAVIGATION BAR -->
+        <nav class="flex justify-between items-center mb-10 px-4">
+            <div class="flex items-center gap-6">
+                <div class="h-16 w-16 bg-gradient-to-tr from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+                   <i data-lucide="trophy" class="text-white w-10 h-10"></i>
+                </div>
+                <div>
+                    <h1 class="bebas text-5xl gold-bg-text leading-none">AUCTION ARENA</h1>
+                    <p class="text-[10px] text-gray-400 tracking-[0.3em] font-bold uppercase mt-1 opacity-60">College IPL Event 2026</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="connection-status" class="flex items-center gap-2 bg-green-500/10 text-green-400 px-4 py-2 rounded-full text-xs font-bold border border-green-500/20">
+                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    LIVE SYNC ACTIVE
+                </div>
+                <div class="text-[10px] text-gray-400 font-mono transition-all" id="last-saved">Sync Header: Initializing...</div>
+                <div class="h-10 w-[1px] bg-white/10 mx-2"></div>
+                <button onclick="toggleSetup()" class="p-3 glass-card hover:bg-white/10 transition-all rounded-xl">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </button>
+                <button onclick="resetAll()" class="p-3 glass-card hover:bg-red-900 border-red-500/30 rounded-xl">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- LEFT: LEADERBOARD -->
+            <div class="lg:col-span-3">
+                <div class="flex items-center justify-between mb-6 px-2">
+                    <h3 class="bebas text-2xl text-gray-400 uppercase">Team Purse</h3>
+                    <span id="team-count" class="bg-primary/20 text-primary text-[10px] font-bold px-3 py-1 rounded-full border border-primary/30">0 TEAMS</span>
+                </div>
+                <div id="teams-list" class="space-y-3 max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- Teams will be injected here -->
                 </div>
             </div>
 
-            <!-- CENTER: PLAYER CARD -->
-            <div class="lg:col-span-6 space-y-6">
-                <!-- Jump to Serial No -->
-                <div class="glass-card p-4 flex gap-4 items-center">
-                    <span class="text-sm font-semibold whitespace-nowrap">GO TO SLIDE NO:</span>
-                    <input type="number" id="jump-sno" class="w-20" placeholder="SNo">
-                    <button onclick="jumpToPlayer()" class="bg-primary text-secondary font-bold px-4 py-2 rounded-lg bebas tracking-widest">JUMP</button>
-                </div>
-
-                <div id="player-card" class="glass-card relative overflow-hidden group min-h-[400px]">
-                    <div class="absolute inset-0 bg-cover bg-center opacity-10 transition-transform duration-1000 group-hover:scale-110" id="player-bg-card"></div>
-                    <div class="relative p-8 flex flex-col items-center text-center">
-                        <div class="text-primary text-6xl bebas tracking-tighter mb-2" id="display-sno">#00</div>
-                        <h2 class="text-6xl font-black mb-4 tracking-tighter uppercase gold-text drop-shadow-2xl" id="display-name" style="text-shadow: 0 0 20px rgba(253, 184, 19, 0.3);">NO PLAYER LOADED</h2>
-                        <div id="display-role" class="mb-6">
-                            <span class="player-badge role-bat text-lg px-4 py-1">ROLE: N/A</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-8 w-full border-t border-gray-800 pt-8 mt-4">
-                            <div>
-                                <p class="text-gray-400 text-sm uppercase tracking-widest mb-1">Base Price</p>
-                                <p class="bebas text-3xl" id="display-base">--</p>
-                            </div>
-                            <div>
-                                <p class="text-gray-400 text-sm uppercase tracking-widest mb-1">Role Points</p>
-                                <p class="bebas text-3xl" id="display-points">--</p>
-                            </div>
-                        </div>
-
-                        <!-- NAVIGATION -->
-                        <div class="flex gap-8 mt-12 w-full justify-between items-center">
-                            <button onclick="prevPlayer()" class="p-4 glass-card hover:bg-gray-800 rounded-full">
-                                <i data-lucide="chevron-left" class="w-8 h-8"></i>
-                            </button>
-                            <span class="text-gray-500 font-mono tracking-widest uppercase">AUCTION ACTIVE</span>
-                            <button onclick="nextPlayer()" class="p-4 glass-card hover:bg-gray-800 rounded-full">
-                                <i data-lucide="chevron-right" class="w-8 h-8"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AUCTION ACTION -->
-                <div class="glass-card p-8 border-t-4 border-primary">
-                    <h3 class="bebas text-2xl gold-text mb-6">BIDDING CONSOLE</h3>
-                    <div class="grid grid-cols-2 gap-6 items-end">
-                        <div class="space-y-2">
-                            <label class="text-xs text-gray-400 uppercase tracking-widest">Buying Team</label>
-                            <select id="select-team" class="w-full">
-                                <option value="">SELECT TEAM...</option>
-                            </select>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-xs text-gray-400 uppercase tracking-widest">Sold Price (Coins)</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-bold">₵</span>
-                                <input type="number" id="sold-price" class="w-full pl-10" placeholder="0">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mt-8">
-                        <button onclick="markUnsold()" class="w-full py-4 border border-gray-600 rounded-xl font-bold text-gray-400 uppercase tracking-widest hover:bg-gray-800">
-                            UNSOLD
+            <!-- CENTER: MAIN DISPLAY -->
+            <div class="lg:col-span-6 space-y-8">
+                <!-- DASHBOARD CONTROLS -->
+                <div class="glass-card p-2 flex gap-2 items-center justify-between bg-[#1A2235]">
+                    <div class="flex gap-2">
+                        <button onclick="prevPlayer()" class="p-4 hover:bg-white/10 rounded-2xl transition-all">
+                            <i data-lucide="chevron-left" class="w-6 h-6"></i>
                         </button>
-                        <button onclick="confirmPurchase()" class="w-full py-4 bg-primary text-secondary rounded-xl font-extrabold text-lg uppercase tracking-widest neon-glow">
-                            CONFIRM SOLD
+                        <div class="w-[1px] h-10 bg-white/10 my-auto"></div>
+                        <button onclick="nextPlayer()" class="p-4 hover:bg-white/10 rounded-2xl transition-all">
+                            <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center bg-black/40 rounded-xl px-4 py-2 gap-4 border border-white/10">
+                        <span class="text-[10px] font-bold text-gray-500 uppercase">Slide No</span>
+                        <input type="number" id="jump-sno" class="w-16 h-10 p-0 text-center bg-transparent border-none text-xl bebas font-bold text-white" placeholder="0">
+                        <button onclick="jumpToPlayer()" class="action-btn-solid px-4 h-10 rounded-lg text-xs font-black uppercase transition-all">
+                            JUMP
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PLAYER CARD -->
+                <div id="player-card" class="glass-card relative overflow-hidden min-h-[500px] group flex flex-col items-center justify-center text-center p-12">
+                    <div id="sold-animation-container" class="absolute inset-0 flex items-center justify-center pointer-events-none"></div>
+                    <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px]"></div>
+                    <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-red-500/10 rounded-full blur-[100px]"></div>
+
+                    <div class="relative w-full" id="player-card-content">
+                        <span class="bebas text-gray-500 text-3xl opacity-50 mb-2 block tracking-widest" id="display-sno">S.NO 00</span>
+                        <h2 id="display-name" class="text-7xl lg:text-8xl font-black uppercase tracking-tight gold-bg-text mb-6 leading-tight drop-shadow-lg">
+                           PLAYER NAME
+                        </h2>
+                        
+                        <div id="display-role" class="mb-10 inline-flex items-center gap-2">
+                            <span class="player-badge role-allrounder text-sm px-6 py-2 shadow-xl">ALL ROUNDER</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-12 w-full max-w-lg mx-auto border-t border-white/5 pt-10">
+                            <div class="text-center group">
+                                <p class="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold mb-2 group-hover:text-primary transition-all">Role Points</p>
+                                <p id="display-points" class="bebas text-5xl">75</p>
+                            </div>
+                            <div class="text-center group">
+                                <p class="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold mb-2 group-hover:text-primary transition-all">Base Price</p>
+                                <p id="display-base" class="bebas text-5xl text-primary">₵ 100K</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BIDDING CONSOLE -->
+                <div class="glass-card p-10 relative overflow-hidden bg-[#111A2D]">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i data-lucide="hammer" class="w-20 h-20"></i>
+                    </div>
+                    <h3 class="bebas text-3xl gold-bg-text mb-8 flex items-center gap-3 italic">
+                        <i data-lucide="zap" class="text-primary w-6 h-6 animate-pulse"></i> LIVE BIDDING
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
+                        <div class="space-y-3">
+                            <label class="text-[10px] text-gray-500 font-black uppercase tracking-widest px-1">Buying Team</label>
+                            <div class="relative">
+                                <select id="select-team" class="w-full text-lg h-14 bg-[#1A2235] text-white border-2 border-white/10 rounded-xl px-4 pr-10 appearance-none">
+                                    <option value="">Select Winning Team...</option>
+                                </select>
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[10px] text-gray-500 font-black uppercase tracking-widest px-1">Winning Price (Coins)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-black text-xl">₵</span>
+                                <input type="number" id="sold-price" class="w-full h-14 pl-12 text-2xl bebas tracking-widest bg-[#1A2235] text-white border-2 border-white/10 rounded-xl" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+                        <button onclick="markUnsold()" class="h-16 action-btn-outline rounded-2xl text-xs font-black uppercase tracking-widest transition-all">
+                            UNSOLD / SKIP
+                        </button>
+                        <button onclick="confirmPurchase()" class="md:col-span-2 h-16 action-btn-solid rounded-2xl text-lg font-black uppercase tracking-widest transition-all pulse-gold hover:scale-[1.02]">
+                            CONFIRM TRANSACTION
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT: ROSTER FEED -->
-            <div class="lg:col-span-3 space-y-4">
-                <h2 class="bebas gold-text text-2xl mb-4">RECENT DEALS</h2>
-                <div id="roster-feed" class="space-y-3 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
-                    <!-- Feed will be injected here -->
+            <!-- RIGHT: RECENT ACTIVITY -->
+            <div class="lg:col-span-3">
+                <h3 class="bebas text-2xl text-gray-400 uppercase mb-6 px-2">Deal History</h3>
+                <div id="roster-feed" class="space-y-4 max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
+                    <!-- History will be injected here -->
+                </div>
+                <div class="mt-8 pt-6 border-t border-white/5 p-2">
+                    <button onclick="exportData()" class="w-full h-14 glass-card hover:bg-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                      <i data-lucide="download" class="w-4 h-4"></i> EXPORT AUCTION DATA
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- INITIAL SETUP OVERLAY -->
-    <div id="setup-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-        <div class="glass-card p-8 w-full max-w-2xl border-primary/20">
-            <h1 class="bebas text-5xl gold-text mb-2 text-center">INITIAL SETUP</h1>
-            <p class="text-gray-400 text-center mb-8">Ready your teams and load the battlefield.</p>
+    <div id="setup-overlay" class="fixed inset-0 bg-[#050A18]/95 backdrop-blur-3xl z-50 flex items-center justify-center p-6">
+        <div class="glass-card p-12 w-full max-w-4xl shadow-[0_50px_100px_rgba(0,0,0,0.8)] border-primary/20">
+            <div class="flex flex-col items-center mb-10">
+                <div class="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20 mb-6">
+                   <i data-lucide="terminal" class="text-primary w-10 h-10"></i>
+                </div>
+                <h1 class="bebas text-7xl gold-bg-text leading-none">INITIAL SETUP</h1>
+                <p class="text-xs text-gray-500 font-bold uppercase tracking-[0.4em] mt-3">Prepare the arena for auction</p>
+            </div>
             
-            <div class="space-y-8">
-                <!-- STEP 1: EXCEL -->
-                <div class="space-y-4 p-6 glass-card border-gray-800">
-                    <div class="flex items-center gap-4 border-b border-gray-800 pb-2 mb-4">
-                        <span class="bg-primary text-secondary w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
-                        <h3 class="bebas text-2xl">LOAD PLAYER LIST (.XLSX)</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- COL 1: EXCEL -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4 border-b border-white/10 pb-4">
+                        <span class="bg-primary text-navy w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs">01</span>
+                        <h3 class="bebas text-2xl tracking-widest">PLAYER DATA (XLSX)</h3>
                     </div>
                     <label class="block w-full cursor-pointer group">
-                        <div class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center group-hover:border-primary transition-colors">
-                            <i data-lucide="upload" class="mx-auto mb-4 w-12 h-12 text-gray-500 group-hover:text-primary"></i>
-                            <p class="text-sm text-gray-400" id="file-status">Drag & drop or Click to upload IPL LIST.xlsx</p>
+                        <div class="border-2 border-dashed border-white/10 rounded-2xl p-10 text-center group-hover:border-primary/50 group-hover:bg-[#1A2235] transition-all bg-[#0A192F]">
+                            <i data-lucide="file-spreadsheet" class="mx-auto mb-4 w-12 h-12 text-gray-600 group-hover:text-primary transition-all"></i>
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest leading-relaxed" id="file-status">Select IPL LIST.XLSX</p>
                             <input type="file" class="hidden" id="excel-file" accept=".xlsx, .xls">
                         </div>
                     </label>
                 </div>
 
-                <!-- STEP 2: TEAMS -->
-                <div class="space-y-4 p-6 glass-card border-gray-800">
-                    <div class="flex items-center gap-4 border-b border-gray-800 pb-2 mb-4">
-                        <span class="bg-primary text-secondary w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
-                        <h3 class="bebas text-2xl">CONFIGURE TEAMS</h3>
+                <!-- COL 2: TEAMS -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4 border-b border-white/10 pb-4">
+                        <span class="bg-primary text-navy w-8 h-8 rounded-lg flex items-center justify-center font-black text-xs">02</span>
+                        <h3 class="bebas text-2xl tracking-widest">TEAM ROSTER</h3>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-                        <div class="space-y-1">
-                            <label class="text-[10px] uppercase text-gray-500">Starting Roster Budget</label>
-                            <input type="number" id="initial-budget" class="w-full" value="200" placeholder="Base Purse">
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- New: Upload teams.xlsx -->
+                        <label class="block w-full cursor-pointer group">
+                            <div class="border-2 border-dashed border-white/10 rounded-xl p-4 text-center group-hover:border-primary/50 bg-[#1A2235]">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest" id="teams-file-status">Optional: Upload teams.xlsx</p>
+                                <input type="file" class="hidden" id="teams-excel-file" accept=".xlsx, .xls">
+                            </div>
+                        </label>
+
+                        <div class="flex gap-3">
+                            <input type="text" id="team-name-input" class="flex-1 h-14 bg-[#1A2235] text-white border-2 border-white/10 rounded-xl px-4" placeholder="Or Add Manually...">
+                            <button onclick="addTeam()" class="action-btn-solid px-6 h-14 rounded-xl flex items-center justify-center shadow-lg transition-all">
+                                <i data-lucide="plus" class="w-6 h-6"></i>
+                            </button>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] uppercase text-gray-500">Team Name</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="team-name-input" class="w-full" placeholder="Enter Team Name">
-                                <button onclick="addTeam()" class="bg-primary text-secondary p-2 rounded-lg"><i data-lucide="plus"></i></button>
+                        <div class="flex items-center gap-4 bg-[#1A2235] p-4 rounded-xl border-2 border-white/10">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Global Purse:</span>
+                            <div class="relative flex-1">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-primary font-bold">₵</span>
+                                <input type="number" id="initial-budget" class="w-full h-10 pl-8 bg-transparent border-none text-xl bebas font-bold text-white" value="200">
                             </div>
                         </div>
                     </div>
-                    <div id="team-setup-list" class="flex flex-wrap gap-2 mt-4"></div>
+                    <div id="team-setup-list" class="flex flex-wrap gap-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar"></div>
                 </div>
+            </div>
 
-                <div class="flex gap-4">
-                    <button onclick="startAuction()" id="start-btn" class="w-full py-4 bg-primary text-secondary bebas text-2xl tracking-widest rounded-xl neon-glow disabled:opacity-20 flex justify-center items-center gap-4">
-                        ENTER THE ARENA <i data-lucide="sword"></i>
-                    </button>
-                    <button onclick="closeSetup()" id="close-setup-btn" class="hidden px-8 border border-gray-800 text-gray-400 rounded-xl bebas text-2xl">CLOSE</button>
-                </div>
+            <div class="mt-12 flex gap-4">
+                <button onclick="startAuction()" id="start-btn" class="flex-1 h-20 action-btn-solid bebas text-3xl tracking-widest rounded-3xl transition-all flex items-center justify-center gap-4">
+                   START AUCTION SESSION <i data-lucide="play" class="w-8 h-8 fill-navy"></i>
+                </button>
+                <button onclick="closeSetup()" id="close-setup-btn" class="hidden px-10 action-btn-outline rounded-3xl bebas text-2xl">EXIT SETTINGS</button>
             </div>
         </div>
     </div>
 
     <!-- SCRIPTS -->
     <script>
-        // --- DATA STATE ---
         let players = [];
         let teams = [];
         let currentIndex = -1;
 
-        const defaultBudget = 200;
-
-        // Load persisted data
+        // Persistance
         if(localStorage.getItem('ipl_auction_data')) {
             const data = JSON.parse(localStorage.getItem('ipl_auction_data'));
             players = data.players || [];
             teams = data.teams || [];
-            currentIndex = data.currentIndex || 0;
+            currentIndex = data.currentIndex !== undefined ? data.currentIndex : -1;
             
             if(players.length > 0 && teams.length > 0) {
+                // AUTO-CORRECT PAST ERRORS (Fix double-click bugs in budget and player count)
+                teams.forEach(t => {
+                    t.players = [];
+                    t.remainingBudget = t.initialBudget;
+                });
+                players.forEach(p => {
+                    if (p.status === 'sold' && p.soldTo) {
+                        const t = teams.find(team => team.name === p.soldTo);
+                        if (t && !t.players.includes(p.sno)) {
+                            t.players.push(p.sno);
+                            t.remainingBudget -= (p.soldPrice || 0);
+                        }
+                    }
+                });
+
                 document.getElementById('setup-overlay').classList.add('hidden');
                 document.getElementById('app').classList.remove('hidden');
                 document.getElementById('close-setup-btn').classList.remove('hidden');
                 renderUI();
+                saveData(); // Sync exact repaired data
             }
         }
 
-        // --- EXCEL HANDLING ---
+        // Excel Loader
         document.getElementById('excel-file').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = function(e) {
                 const data = new Uint8Array(e.target.result);
                 const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
                 
-                // Convert to 2D array to find headers manually
-                const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                
-                // Find Header Row (first row that contains "s.no" or "names")
-                let headerRowIndex = -1;
+                let headIdx = -1;
                 for(let i=0; i<rows.length; i++) {
-                    const row = rows[i];
-                    if(row.some(cell => {
-                        const val = String(cell || '').toLowerCase();
-                        return val.includes('names') || val.includes('s.no') || val.includes('sno');
-                    })) {
-                        headerRowIndex = i;
-                        break;
-                    }
+                    if(rows[i].some(c => String(c).toLowerCase().match(/names|s.no|sno/))) { headIdx = i; break; }
                 }
 
-                if(headerRowIndex === -1) {
-                    alert("Could not find column headers in Excel. Please ensure columns are named 's.no', 'names', 'role', 'points', 'coins'.");
-                    return;
-                }
+                if(headIdx === -1) { alert("Headers not found. Use 's.no', 'names', 'role', 'points', 'coins'."); return; }
 
-                // Get headers and data
-                const headers = rows[headerRowIndex].map(h => String(h || '').toLowerCase().replace(/[^a-z0-9]/g, ''));
-                const jsonData = rows.slice(headerRowIndex + 1);
-
-                const getCol = (names) => names.map(n => headers.indexOf(n)).find(idx => idx !== -1);
+                const headers = rows[headIdx].map(h => String(h || '').toLowerCase().replace(/[^a-z0-9]/g, ''));
+                const getI = (ks) => ks.map(k => headers.indexOf(k)).find(i => i !== -1);
                 
-                const snoIdx = getCol(['sno', 'serialno', 'id', 'no']);
-                const nameIdx = getCol(['names', 'name', 'player', 'playername']);
-                const roleIdx = getCol(['role', 'position', 'type']);
-                const pointsIdx = getCol(['points', 'rolepoints', 'rp']);
-                const coinsIdx = getCol(['coins', 'baseprice', 'price', 'base']);
+                const idx = { sno: getI(['sno', 'serialno']), name: getI(['names', 'name']), role: getI(['role']), pts: getI(['points', 'rolepoints']), coins: getI(['coins', 'baseprice']) };
 
-                players = jsonData.map(row => {
-                    const name = row[nameIdx] ? String(row[nameIdx]).trim() : null;
-                    if(!name) return null;
-
+                players = rows.slice(headIdx + 1).map(r => {
+                    if(!r[idx.name]) return null;
                     return {
-                        sno: parseInt(row[snoIdx]) || 0,
-                        name: name,
-                        role: row[roleIdx] ? String(row[roleIdx]).trim() : 'N/A',
-                        points: parseInt(row[pointsIdx]) || 0,
-                        base: parseInt(row[coinsIdx]) || 0,
+                        sno: parseInt(r[idx.sno]) || 0,
+                        name: String(r[idx.name]).trim(),
+                        role: String(r[idx.role] || 'N/A').trim(),
+                        points: parseInt(r[idx.pts]) || 0,
+                        base: parseInt(r[idx.coins]) || 0,
                         status: 'available',
-                        soldTo: null,
-                        soldPrice: 0
+                        soldTo: null, soldPrice: 0
                     };
-                }).filter(p => p !== null);
+                }).filter(p => p);
 
-                if(players.length > 0) {
-                    document.getElementById('file-status').innerText = `Loaded ${players.length} players successfully!`;
-                    document.getElementById('file-status').classList.remove('text-gray-400');
-                    document.getElementById('file-status').classList.add('text-green-500');
-                    currentIndex = 0;
-                    saveData();
-                } else {
-                    document.getElementById('file-status').innerText = "No players found under headers. Check Excel format!";
-                    document.getElementById('file-status').classList.add('text-red-500');
-                }
+                document.getElementById('file-status').innerText = `${players.length} Players Imported!`;
+                document.getElementById('file-status').className = "text-xs font-black text-primary uppercase tracking-widest";
+                currentIndex = 0;
+                saveData();
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // --- TEAM MGMT ---
+        // Teams Excel Loader
+        document.getElementById('teams-excel-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+                
+                let headIdx = -1;
+                for(let i=0; i<rows.length; i++) {
+                    if(rows[i].some(c => {
+                        const val = String(c || '').toLowerCase();
+                        return val === 'teams' || val === 'team' || val === 'team name';
+                    })) { headIdx = i; break; }
+                }
+
+                if(headIdx === -1) { alert("Column named 'teams' not found in teams.xlsx."); return; }
+
+                const headers = rows[headIdx].map(h => String(h || '').toLowerCase().trim());
+                const teamIdx = headers.findIndex(h => h === 'teams' || h === 'team' || h === 'team name');
+                const budget = parseInt(document.getElementById('initial-budget').value) || 200;
+
+                const newTeams = rows.slice(headIdx + 1).map(r => {
+                    const name = r[teamIdx] ? String(r[teamIdx]).trim() : null;
+                    if(!name || teams.some(t => t.name === name)) return null;
+                    return { name, initialBudget: budget, remainingBudget: budget, players: [] };
+                }).filter(t => t);
+
+                teams = [...teams, ...newTeams];
+                document.getElementById('teams-file-status').innerText = `${newTeams.length} Teams Loaded!`;
+                document.getElementById('teams-file-status').className = "text-[10px] font-black text-primary uppercase tracking-widest";
+                renderSetupTeams();
+                saveData();
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
         function addTeam() {
-            const nameInput = document.getElementById('team-name-input');
-            const budgetInput = document.getElementById('initial-budget');
-            const name = nameInput.value.trim();
-            const budget = parseInt(budgetInput.value) || defaultBudget;
-
-            if(!name) return;
-            if(teams.find(t => t.name === name)) return;
-
-            teams.push({
-                name: name,
-                initialBudget: budget,
-                remainingBudget: budget,
-                purseSpent: 0,
-                players: []
-            });
-
-            nameInput.value = '';
+            const el = document.getElementById('team-name-input');
+            const name = el.value.trim();
+            const budget = parseInt(document.getElementById('initial-budget').value) || 200;
+            if(!name || teams.some(t => t.name === name)) return;
+            teams.push({ name, initialBudget: budget, remainingBudget: budget, players: [] });
+            el.value = '';
             renderSetupTeams();
             saveData();
         }
 
         function renderSetupTeams() {
-            const list = document.getElementById('team-setup-list');
-            list.innerHTML = teams.map((t, idx) => `
-                <div class="bg-gray-800 text-white px-3 py-1 rounded-full flex items-center gap-2 border border-gray-700">
-                    <span class="text-sm">${t.name} (₵${t.remainingBudget})</span>
-                    <button onclick="removeTeam(${idx})" class="text-red-500 hover:text-red-400">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
+            document.getElementById('team-setup-list').innerHTML = teams.map((t, i) => `
+                <div class="bg-primary/10 border border-primary/20 text-primary px-4 py-2 rounded-xl flex items-center gap-3 animate-fade-in">
+                    <span class="font-bold text-xs">${t.name}</span>
+                    <button onclick="teams.splice(${i},1); renderSetupTeams(); saveData();" class="text-primary hover:text-white"><i data-lucide="x" class="w-3 h-3"></i></button>
                 </div>
             `).join('');
             lucide.createIcons();
         }
 
-        function removeTeam(idx) {
-            teams.splice(idx, 1);
-            renderSetupTeams();
-            saveData();
-        }
-
-        function deleteTeamByName(name) {
-            if(confirm(`Delete team "${name}"? This will return their players to the pool.`)) {
-                const team = teams.find(t => t.name === name);
-                if(team) {
-                    team.players.forEach(pSno => {
-                        const p = players.find(player => player.sno === pSno);
-                        if(p) {
-                            p.status = 'available';
-                            p.soldTo = null;
-                        }
-                    });
-                }
-                teams = teams.filter(t => t.name !== name);
-                saveData();
-                renderUI();
-            }
-        }
-
-        // --- AUCTION LOGIC ---
-        function startAuction() {
-            if(players.length === 0) {
-                alert("Please upload the IPL LIST.xlsx file first!");
-                return;
-            }
-            if(teams.length === 0) {
-                alert("Please add at least one team!");
-                return;
-            }
-            document.getElementById('setup-overlay').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            document.getElementById('close-setup-btn').classList.remove('hidden');
-            renderUI();
-        }
-
-        function toggleSetup() {
-            document.getElementById('setup-overlay').classList.toggle('hidden');
-            renderSetupTeams();
-        }
-
-        function closeSetup() {
-             document.getElementById('setup-overlay').classList.add('hidden');
-        }
-
         function renderUI() {
-            if(currentIndex < 0 || currentIndex >= players.length) return;
-            
             const p = players[currentIndex];
-            document.getElementById('display-sno').innerText = `#${p.sno}`;
+            const content = document.getElementById('player-card-content');
+            
+            if(!p || currentIndex >= players.length) {
+                content.innerHTML = `
+                    <div class="text-center py-20 animate-fade-in">
+                        <i data-lucide="award" class="w-24 h-24 text-primary mx-auto mb-6"></i>
+                        <h2 class="bebas text-6xl gold-bg-text mb-4 uppercase">Auction Complete!</h2>
+                        <p class="text-gray-500 font-bold uppercase tracking-widest mb-10">All players have been processed</p>
+                        <div class="flex flex-col items-center gap-4">
+                            <button onclick="exportData()" class="action-btn-solid px-12 h-16 rounded-2xl text-xl bebas tracking-widest shadow-xl">DOWNLOAD FINAL REPORT</button>
+                            <button onclick="resetAll()" class="text-red-500 font-bold uppercase text-[10px] tracking-widest border border-red-500/20 px-6 py-2 rounded-full hover:bg-red-500/10 transition-all mt-10">START NEW SEASON</button>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            // Restore template if we were at the end but jumped back
+            if(content.querySelector('.award')) {
+                location.reload(); // Simplest way to restore complexity
+            }
+
+            document.getElementById('display-sno').innerText = `SERIAL NO #${p.sno}`;
             document.getElementById('display-name').innerText = p.name;
-            document.getElementById('display-base').innerText = `₵ ${p.base}`;
             document.getElementById('display-points').innerText = p.points;
+            document.getElementById('display-base').innerText = `₵ ${p.base}`;
             
-            // Badge style
-            const roleEl = document.getElementById('display-role');
-            let colorClass = 'bg-gray-700';
-            const roleLower = p.role.toLowerCase();
-            if(roleLower.includes('bat')) colorClass = 'role-bat';
-            else if(roleLower.includes('bowl')) colorClass = 'role-bowl';
-            else if(roleLower.includes('ar') || roleLower.includes('all')) colorClass = 'role-ar';
-            else if(roleLower.includes('wk') || roleLower.includes('keep')) colorClass = 'role-wk';
-            
-            roleEl.innerHTML = `<span class="player-badge ${colorClass} text-lg px-6 py-2">ROLE: ${p.role}</span>`;
+            const rTag = document.getElementById('display-role');
+            const r = (p.role || '').toLowerCase();
+            let cls = 'role-allrounder';
+            if(r.includes('bat')) cls = 'role-batsman';
+            else if(r.includes('bowl')) cls = 'role-bowler';
+            else if(r.includes('wk') || r.includes('keep')) cls = 'role-wk';
+            rTag.innerHTML = `<span class="player-badge ${cls} text-xs px-6 py-2 shadow-2xl">${p.role}</span>`;
 
-            // Reset Bid inputs
+            // Inputs
             document.getElementById('sold-price').value = p.base;
-            document.getElementById('select-team').innerHTML = `<option value="">SELECT TEAM...</option>` + 
-                teams.map(t => `<option value="${t.name}">${t.name} (₵${t.remainingBudget})</option>`).join('');
-
-            // Background variation
-            const colors = ['#001a35', '#1a0035', '#00351a', '#351a00'];
-            document.getElementById('player-bg-card').style.backgroundColor = colors[p.sno % colors.length];
+            document.getElementById('select-team').innerHTML = `<option value="">Select Winning Team...</option>` + 
+                teams.map(t => `<option value="${t.name}">${t.name} (Budget: ₵${t.remainingBudget})</option>`).join('');
 
             renderTeamsList();
             renderFeed();
@@ -463,27 +548,24 @@
         }
 
         function renderTeamsList() {
-            const list = document.getElementById('teams-list');
-            if(teams.length === 0) {
-                list.innerHTML = '<div class="text-center py-4 text-white/20 uppercase tracking-widest text-xs">No Teams Added</div>';
-                return;
-            }
-
-            list.innerHTML = teams.sort((a,b) => b.remainingBudget - a.remainingBudget).map(t => `
-                <div class="glass-card p-4 border-l-4 ${t.remainingBudget < 5 ? 'border-red-500' : 'border-primary'} transition-all group relative">
-                    <button onclick="deleteTeamByName('${t.name}')" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1 text-red-500 hover:bg-red-900/20 rounded transition-all">
+            document.getElementById('team-count').innerText = `${teams.length} TEAMS`;
+            document.getElementById('teams-list').innerHTML = teams.sort((a,b) => b.remainingBudget - a.remainingBudget).map(t => `
+                <div class="glass-card p-5 team-card relative group">
+                    <button onclick="deleteTeam('${t.name}')" class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-all">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-bold text-lg uppercase tracking-tight">${t.name}</h4>
-                        <span class="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400">#${t.players.length} PLAYERS</span>
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="font-black text-lg uppercase tracking-tight">${t.name}</h4>
+                        <span class="text-[9px] bg-white/5 px-2 py-1 rounded-full border border-white/10 text-gray-400 font-bold">${t.players.length} PLAYERS</span>
                     </div>
                     <div class="flex justify-between items-end">
-                        <div class="text-xs text-gray-500 uppercase tracking-widest">Remaining</div>
-                        <div class="text-xl bebas text-white">₵ ${t.remainingBudget}</div>
-                    </div>
-                    <div class="w-full bg-white/5 h-1 rounded-full mt-3 overflow-hidden">
-                        <div class="bg-primary h-full transition-all duration-500" style="width: ${(t.remainingBudget/t.initialBudget)*100}%"></div>
+                        <div class="space-y-1">
+                            <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest">Available Purse</p>
+                            <p class="bebas text-3xl gold-bg-text leading-none">₵ ${t.remainingBudget}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
+                            <i data-lucide="wallet" class="w-5 h-5 text-primary opacity-50"></i>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -491,90 +573,229 @@
         }
 
         function renderFeed() {
-            const feed = document.getElementById('roster-feed');
-            const history = [...players].filter(p => p.status !== 'available').reverse();
-            
-            if(history.length === 0) {
-                feed.innerHTML = `<div class="text-center py-20 text-gray-600 italic">No deals recorded yet...</div>`;
-                return;
-            }
-
-            feed.innerHTML = history.map(p => `
-                <div class="glass-card p-3 border border-white/5 flex items-center gap-4 ${p.status === 'unsold' ? 'opacity-50 grayscale' : 'border-green-500/20'}">
-                    <div class="text-xl font-bold text-gray-700 bebas">#${p.sno}</div>
+            const items = players.filter(p => p.status !== 'available').reverse();
+            document.getElementById('roster-feed').innerHTML = items.length ? items.map(p => `
+                <div class="glass-card p-4 flex items-center gap-4 ${p.status === 'sold' ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500 opacity-60'} bg-[#111A2D]">
+                    <div class="h-10 w-10 bg-white/5 rounded-full flex items-center justify-center bebas font-bold text-gray-400">#${p.sno}</div>
                     <div class="flex-1">
-                        <div class="font-bold text-sm uppercase">${p.name}</div>
-                        <div class="text-[10px] text-gray-400 capitalize">${p.status === 'sold' ? 'Sold to ' + p.soldTo : 'Unsold'}</div>
+                        <p class="text-xs font-black uppercase tracking-tight truncate">${p.name}</p>
+                        <p class="text-[9px] font-bold text-gray-500 uppercase">${p.status === 'sold' ? 'Bought by ' + p.soldTo : 'Unsold'}</p>
                     </div>
                     <div class="text-right">
-                        <div class="bebas font-bold text-primary">${p.status === 'sold' ? '₵'+p.soldPrice : '--'}</div>
+                        <p class="bebas text-xl text-primary leading-none">${p.status === 'sold' ? '₵'+p.soldPrice : '--'}</p>
                     </div>
                 </div>
-            `).join('');
+            `).join('') : '<div class="text-center py-20 text-gray-600 font-bold uppercase text-[10px] tracking-[0.2em]">Arena Empty</div>';
+            lucide.createIcons();
         }
 
-        function jumpToPlayer() {
-            const sno = parseInt(document.getElementById('jump-sno').value);
-            const idx = players.findIndex(p => p.sno === sno);
-            if(idx !== -1) {
-                currentIndex = idx;
-                renderUI();
-            } else {
-                alert("Player SNo " + sno + " not found!");
-            }
+        function deleteTeam(name) {
+            if(!confirm(`Exile team "${name}" and return their players?`)) return;
+            const t = teams.find(team => team.name === name);
+            if(t) t.players.forEach(sno => { const p = players.find(p => p.sno === sno); if(p) { p.status = 'available'; p.soldTo = null; } });
+            teams = teams.filter(t => t.name !== name);
+            saveData(); renderUI();
         }
-
-        function prevPlayer() { if(currentIndex > 0) { currentIndex--; renderUI(); } }
-        function nextPlayer() { if(currentIndex < players.length - 1) { currentIndex++; renderUI(); } }
-
         function confirmPurchase() {
+            if(window.isProcessing) return;
             const teamName = document.getElementById('select-team').value;
             const price = parseInt(document.getElementById('sold-price').value);
-            const player = players[currentIndex];
+            const p = players[currentIndex];
+            const t = teams.find(team => team.name === teamName);
+            
+            if(!t) { alert("Select a buyer!"); return; }
+            if(price > t.remainingBudget) { alert("Purse exhausted!"); return; }
+            
+            window.isProcessing = true; // Prevent double-clicks
 
-            if(!teamName) { alert("Please select a team!"); return; }
+            // SOLD OVERLAY ANIMATION
+            const overlay = document.createElement('div');
+            overlay.className = 'sold-overlay absolute flex flex-col items-center justify-center';
+            overlay.innerHTML = `
+                <div class="bebas text-[150px] text-primary drop-shadow-[0_0_30px_rgba(255,215,0,1)] uppercase tracking-tighter filter brightness-150">SOLD!</div>
+                <div class="bebas text-4xl text-white opacity-80 mt-[-40px] tracking-[0.5em] font-black">${teamName}</div>
+            `;
+            document.getElementById('sold-animation-container').appendChild(overlay);
 
-            const team = teams.find(t => t.name === teamName);
-            if(price > team.remainingBudget) { alert("Insufficient Budget!"); return; }
+            // Record Deal
+            p.status = 'sold'; 
+            p.soldTo = teamName; 
+            p.soldPrice = price;
+            if (!t.players.includes(p.sno)) {
+                t.players.push(p.sno);
+                t.remainingBudget -= price; 
+            }
 
-            player.status = 'sold';
-            player.soldTo = teamName;
-            player.soldPrice = price;
-            team.remainingBudget -= price;
-            team.players.push(player.sno);
-
-            saveData();
-            nextPlayer();
-            renderUI();
+            // Sync in background
+            saveData(); 
+            
+            // Move to next player after animation
+            setTimeout(() => {
+                overlay.remove();
+                nextPlayer();
+                window.isProcessing = false;
+            }, 1000);
         }
 
-        function markUnsold() {
-            players[currentIndex].status = 'unsold';
-            saveData();
-            nextPlayer();
-            renderUI();
+        function markUnsold() { 
+            if(window.isProcessing) return;
+            const p = players[currentIndex];
+            if(!p) return;
+            window.isProcessing = true;
+            p.status = 'unsold'; 
+            saveData(); 
+            nextPlayer(); 
+            window.isProcessing = false;
         }
 
-        function saveData() {
-            localStorage.setItem('ipl_auction_data', JSON.stringify({ players, teams, currentIndex }));
-        }
+        async function saveData() { 
+            const auctionData = { players, teams, currentIndex };
+            localStorage.setItem('ipl_auction_data', JSON.stringify(auctionData));
+            
+            const now = new Date();
+            const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            const statusEl = document.getElementById('last-saved');
+            statusEl.innerText = "Syncing...";
+            statusEl.className = "text-[10px] text-yellow-400 font-mono";
 
-        function resetAll() {
-            if(confirm("THIS WILL WIPE EVERYTHING. ARE YOU SURE?")) {
-                localStorage.removeItem('ipl_auction_data');
-                location.reload();
+            // Sync to Local Excel Server (auction_recorder.py)
+            try {
+                const response = await fetch('http://localhost:5000/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(auctionData)
+                });
+                
+                if(response.ok) {
+                    statusEl.innerText = `Excel Synced: ${timeStr}`;
+                    statusEl.className = "text-[10px] text-green-400 font-mono";
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                statusEl.innerText = `Local Only (Server Off): ${timeStr}`;
+                statusEl.className = "text-[10px] text-red-400 font-mono";
+                console.warn("Run 'python auction_recorder.py' to enable Live Excel Sync.");
+                alert("Excel Sync Server not running. Run 'python auction_recorder.py' for live Excel updates. If Excel file is open, close it to avoid locking issues.");
             }
         }
 
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({teams, players}, null, 2));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "ipl_auction_results.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+        function nextPlayer() { 
+            // Optional: Skip already sold/unsold players when clicking next?
+            // For now, just move the index
+            if(currentIndex < players.length - 1) { 
+                currentIndex++; 
+                renderUI(); 
+            } else {
+                renderUI(); // Re-render to show "End" state if needed
+            }
         }
+
+        function prevPlayer() { 
+            if(currentIndex > 0) { 
+                currentIndex--; 
+                renderUI(); 
+            } 
+        }
+
+        function jumpToPlayer() { 
+            const sno = parseInt(document.getElementById('jump-sno').value);
+            const idx = players.findIndex(p => p.sno === sno);
+            if(idx !== -1) { 
+                currentIndex = idx; 
+                renderUI(); 
+            } else {
+                alert("Player S.No " + sno + " not found!");
+            }
+        }
+
+        function startAuction() { 
+            if(!players.length || !teams.length) return alert("Please upload players and teams first!");
+            document.getElementById('setup-overlay').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            if(currentIndex === -1) currentIndex = 0;
+            renderUI();
+            saveData(); // Sync initial state
+        }
+        function toggleSetup() { document.getElementById('setup-overlay').classList.toggle('hidden'); document.getElementById('close-setup-btn').classList.toggle('hidden'); }
+        function closeSetup() { document.getElementById('setup-overlay').classList.add('hidden'); }
+        function resetAll() { if(confirm("REBOOT SYSTEM? ALL DATA LOST.")) { localStorage.clear(); location.reload(); } }
+
+        function exportData() {
+            if(teams.length === 0) { alert("No data to export!"); return; }
+
+            const wb = XLSX.utils.book_new();
+
+            // 1. MASTER LEADERBOARD SHEET
+            const leaderboardData = teams.map(t => {
+                const teamPicks = players.filter(p => p.soldTo === t.name);
+                const spent = teamPicks.reduce((sum, p) => sum + (p.soldPrice || 0), 0);
+                return {
+                    "Team Name": t.name,
+                    "Initial Purse": t.initialBudget,
+                    "Spent": spent,
+                    "Remaining Balance": t.initialBudget - spent,
+                    "Total Players": teamPicks.length
+                };
+            });
+            const wsLeaderboard = XLSX.utils.json_to_sheet(leaderboardData);
+            XLSX.utils.book_append_sheet(wb, wsLeaderboard, "Leaderboard");
+
+            // 2. MASTER SOLD LIST
+            const soldList = players.filter(p => p.status === 'sold').map(p => ({
+                "S.No": p.sno,
+                "Player Name": p.name,
+                "Role": p.role,
+                "Points": p.points,
+                "Sold To": p.soldTo,
+                "Price": p.soldPrice
+            }));
+            const wsSold = XLSX.utils.json_to_sheet(soldList);
+            XLSX.utils.book_append_sheet(wb, wsSold, "All Sales");
+
+            // 3. INDIVIDUAL TEAM SHEETS
+            teams.forEach(t => {
+                const teamRoster = players.filter(p => p.soldTo === t.name).map(p => ({
+                    "S.No": p.sno,
+                    "Player Name": p.name,
+                    "Role": p.role,
+                    "Price Paid": p.soldPrice
+                }));
+                const wsTeam = XLSX.utils.json_to_sheet(teamRoster);
+                XLSX.utils.book_append_sheet(wb, wsTeam, t.name.substring(0, 31)); // sheet names max 31 chars
+            });
+
+            // Trigger Download
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            XLSX.writeFile(wb, `IPL_AUCTION_REPORT_${timestamp}.xlsx`);
+        }
+        // Sync back if changed in Live Display
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'ipl_auction_data' && e.newValue) {
+                const data = JSON.parse(e.newValue);
+                if (data.currentIndex !== currentIndex) {
+                    currentIndex = data.currentIndex;
+                    renderUI();
+                }
+            }
+        });
+
+        // Initialize from storage if exists
+        (function() {
+            const saved = localStorage.getItem('ipl_auction_data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                players = data.players || [];
+                teams = data.teams || [];
+                currentIndex = data.currentIndex !== undefined ? data.currentIndex : -1;
+                if(players.length > 0 && currentIndex !== -1) {
+                    document.getElementById('setup-overlay').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                    renderUI();
+                }
+            }
+        })();
 
         lucide.createIcons();
     </script>

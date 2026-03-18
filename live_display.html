@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live IPL Auction Display</title>
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #0A192F;
+            --accent: #E31D23;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #050A18;
+            color: #fff;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .bebas { font-family: 'Bebas Neue', cursive; letter-spacing: 2px; }
+        
+        .gold-bg-text {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .role-bowler { background: linear-gradient(135deg, #10B981, #059669); }
+        .role-batsman { background: linear-gradient(135deg, #EF4444, #DC2626); }
+        .role-allrounder { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+        .role-wk { background: linear-gradient(135deg, #F59E0B, #D97706); }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Ambient Glows */
+        .ambient-glow-1 {
+            position: absolute;
+            top: -20%; left: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: -20%; right: -10%;
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(227,29,35,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        /* Animations */
+        @keyframes popup {
+            0% { transform: scale(0.5); opacity: 0; filter: blur(20px); }
+            50% { transform: scale(1.1); opacity: 1; filter: blur(0px); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes soldOut {
+            0% { transform: translate(-50%, -50%) scale(0.1) rotate(-15deg); opacity: 0; }
+            40% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(0.9) rotate(-3deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes badgePulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        .animate-sold {
+            animation: soldOut 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .sold-overlay {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 50;
+            display: none;
+        }
+
+        .unsold-overlay {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 50;
+            display: none;
+        }
+
+        .animate-unsold {
+            animation: soldOut 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <!-- Header -->
+    <header class="p-8 flex justify-between items-center z-10">
+        <div class="flex items-center gap-6">
+            <div class="h-20 w-20 bg-gradient-to-tr from-yellow-400 to-yellow-600 rounded-3xl flex items-center justify-center shadow-2xl transform -rotate-3 border-2 border-yellow-200/50">
+               <i data-lucide="trophy" class="text-white w-12 h-12"></i>
+            </div>
+            <div>
+                <h1 class="bebas text-6xl gold-bg-text leading-none drop-shadow-lg">LIVE AUCTION</h1>
+                <p class="text-sm text-gray-400 tracking-[0.4em] font-bold uppercase mt-2">College IPL Event 2026</p>
+            </div>
+        </div>
+        <div class="glass-panel px-8 py-4 flex items-center gap-6">
+            <div class="flex flex-col items-end">
+                <span class="text-xs text-gray-400 font-bold tracking-widest uppercase">Up Next / Current</span>
+                <span id="player-sno" class="bebas text-3xl text-white">#--</span>
+            </div>
+            <div class="w-px h-12 bg-white/20"></div>
+            <div class="flex items-center gap-3">
+                <div class="relative flex h-4 w-4">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white/20"></span>
+                </div>
+                <span class="font-bold tracking-widest text-sm text-red-500 uppercase">LIVE</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex items-center justify-center p-10 z-10 relative">
+        <div id="waiting-state" class="text-center transition-all duration-500">
+            <i data-lucide="radio" class="w-24 h-24 text-gray-600 mx-auto mb-6 animate-pulse"></i>
+            <h2 class="bebas text-5xl text-gray-500 tracking-widest">WAITING FOR DATA...</h2>
+        </div>
+
+        <div id="player-container" class="glass-panel w-full max-w-6xl p-16 relative overflow-hidden hidden transition-all duration-500 transform scale-95 opacity-0">
+            <!-- decorative bg element -->
+            <div class="absolute -right-32 -bottom-32 text-[300px] text-white/5 opacity-20 bebas pointer-events-none" id="bg-sno">#0</div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
+                <!-- Left: Player Info -->
+                <div class="flex flex-col justify-center">
+                    <span id="player-role-badge" class="inline-block px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest shadow-lg mb-8 w-max text-white">ALL ROUNDER</span>
+                    
+                    <h2 id="player-name" class="text-7xl lg:text-9xl font-black uppercase tracking-tighter text-white leading-[0.9] mb-8 drop-shadow-2xl" style="text-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        PLAYER NAME
+                    </h2>
+                    
+                    <div class="flex gap-12">
+                        <div>
+                            <p class="text-sm text-gray-400 font-bold uppercase tracking-[0.3em] mb-2">Base Price</p>
+                            <p id="player-base" class="bebas text-6xl text-primary drop-shadow-md">₵ 100K</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400 font-bold uppercase tracking-[0.3em] mb-2">Role Points</p>
+                            <p id="player-points" class="bebas text-6xl text-white drop-shadow-md">75</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Sold Info (Initially hidden) -->
+                <div id="sold-info-container" class="flex flex-col justify-center items-center lg:items-end text-center lg:text-right opacity-0 transition-opacity duration-500 translate-x-8">
+                    <div class="glass-panel p-10 w-full bg-gradient-to-br from-white/10 to-transparent border-t border-l border-white/20">
+                        <p class="text-sm text-gray-300 font-bold uppercase tracking-[0.4em] mb-6">Acquired By</p>
+                        <h3 id="sold-team" class="bebas text-6xl lg:text-7xl text-white mb-8 drop-shadow-lg gold-bg-text">TEAM NAME</h3>
+                        
+                        <div class="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent mb-8"></div>
+                        
+                        <p class="text-sm text-gray-300 font-bold uppercase tracking-[0.4em] mb-2">Final Winning Bid</p>
+                        <p id="sold-price" class="bebas text-8xl text-primary drop-shadow-2xl animate-[badgePulse_2s_infinite] rounded-3xl p-4 inline-block">₵ 500K</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popups -->
+        <div id="sold-popup" class="sold-overlay">
+            <div class="bebas text-[200px] text-primary drop-shadow-[0_0_80px_rgba(255,215,0,0.8)] leading-none text-center">SOLD!</div>
+        </div>
+        
+        <div id="unsold-popup" class="unsold-overlay">
+            <div class="bebas text-[180px] text-gray-400 drop-shadow-[0_0_50px_rgba(255,255,255,0.2)] leading-none text-center grayscale tracking-widest">UNSOLD</div>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let previousStateStr = "";
+        let popupActive = false;
+        
+        function updateUI(data) {
+            if (!data || !data.players || data.players.length === 0) return;
+            
+            const p = data.players[data.currentIndex];
+            if (!p) return;
+
+            // Hide waiting state, show container
+            document.getElementById('waiting-state').classList.add('hidden');
+            const container = document.getElementById('player-container');
+            container.classList.remove('hidden');
+            // small delay to allow display:block to apply before animating opacity
+            setTimeout(() => {
+                container.classList.remove('scale-95', 'opacity-0');
+                container.classList.add('scale-100', 'opacity-100');
+            }, 50);
+
+            // Update basic info
+            document.getElementById('player-sno').innerText = `#${p.sno}`;
+            document.getElementById('bg-sno').innerText = `#${p.sno}`;
+            document.getElementById('player-name').innerText = p.name;
+            document.getElementById('player-base').innerText = `₵ ${p.base}`;
+            document.getElementById('player-points').innerText = p.points;
+
+            // Update Role Badge
+            const rTag = document.getElementById('player-role-badge');
+            const r = (p.role || '').toLowerCase();
+            let cls = 'role-allrounder';
+            if(r.includes('bat')) cls = 'role-batsman';
+            else if(r.includes('bowl')) cls = 'role-bowler';
+            else if(r.includes('wk') || r.includes('keep')) cls = 'role-wk';
+            
+            rTag.className = `inline-block px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest shadow-lg mb-8 w-max text-white ${cls}`;
+            rTag.innerText = p.role;
+
+            // Handle Status UI
+            const soldContainer = document.getElementById('sold-info-container');
+            const soldPopup = document.getElementById('sold-popup');
+            const unsoldPopup = document.getElementById('unsold-popup');
+
+            if (p.status === 'sold') {
+                document.getElementById('sold-team').innerText = p.soldTo;
+                document.getElementById('sold-price').innerText = `₵ ${p.soldPrice}`;
+                
+                soldContainer.classList.remove('opacity-0', 'translate-x-8');
+                soldContainer.classList.add('opacity-100', 'translate-x-0');
+                
+                // Dim the player name slightly
+                document.getElementById('player-name').style.opacity = '0.7';
+                
+            } else if (p.status === 'unsold') {
+                soldContainer.classList.remove('opacity-100', 'translate-x-0');
+                soldContainer.classList.add('opacity-0', 'translate-x-8');
+                document.getElementById('player-name').style.opacity = '0.4';
+                document.getElementById('player-name').classList.add('grayscale');
+            } else {
+                // Available
+                soldContainer.classList.remove('opacity-100', 'translate-x-0');
+                soldContainer.classList.add('opacity-0', 'translate-x-8');
+                document.getElementById('player-name').style.opacity = '1';
+                document.getElementById('player-name').classList.remove('grayscale');
+                soldPopup.style.display = 'none';
+                soldPopup.classList.remove('animate-sold');
+                unsoldPopup.style.display = 'none';
+                unsoldPopup.classList.remove('animate-unsold');
+            }
+        }
+
+        function triggerPopup(type) {
+            const popupId = type === 'sold' ? 'sold-popup' : 'unsold-popup';
+            const popup = document.getElementById(popupId);
+            const animClass = type === 'sold' ? 'animate-sold' : 'animate-unsold';
+            
+            // reset animation
+            popup.style.display = 'none';
+            popup.classList.remove(animClass);
+            
+            setTimeout(() => {
+                popup.style.display = 'block';
+                popup.classList.add(animClass);
+            }, 50);
+        }
+
+        function detectChanges(oldState, newState) {
+            if (!oldState || !newState) return;
+            
+            const oldP = oldState.players[oldState.currentIndex];
+            const newP = newState.players[newState.currentIndex];
+
+            if (!oldP || !newP) return;
+
+            // Did the SAME player's status change?
+            if (oldP.sno === newP.sno) {
+                if (oldP.status === 'available' && newP.status === 'sold') {
+                    triggerPopup('sold');
+                } else if (oldP.status === 'available' && newP.status === 'unsold') {
+                    triggerPopup('unsold');
+                }
+            }
+        }
+        
+        async function fetchState() {
+            try {
+                const res = await fetch('http://localhost:5000/state');
+                if (res.ok) {
+                    const data = await res.json();
+                    const currentStateStr = JSON.stringify(data);
+                    
+                    if (currentStateStr !== previousStateStr) {
+                        const oldState = previousStateStr ? JSON.parse(previousStateStr) : null;
+                        detectChanges(oldState, data);
+                        updateUI(data);
+                        previousStateStr = currentStateStr;
+                    }
+                }
+            } catch (err) {
+                console.warn('Backend not reachable yet.');
+            }
+        }
+
+        // Poll every 1000ms
+        setInterval(fetchState, 1000);
+        // Initial fetch
+        fetchState();
+    </script>
+</body>
+</html>
