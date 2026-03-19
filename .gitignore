@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Excel Trackers (Keep templates, ignore live data if preferred)
+# IPL_LIVE_AUCTION_TRACKER_Day_2.xlsx
+# LIVE_AUCTION_TRACKER.xlsx
+
+# Temporary Files
+RUNNING.txt
+*.txt
+.DS_Store
+.vscode/
+.idea/

@@ -142,50 +142,52 @@
         .pulse-gold { animation: pulse-gold 2s infinite; }
     </style>
 </head>
-<body class="p-4 md:p-6 lg:p-8">
+    <body class="p-2 sm:p-4 md:p-6 lg:p-8">
 
     <div id="app" class="max-w-[1600px] mx-auto hidden">
         <!-- TOP NAVIGATION BAR -->
-        <nav class="flex justify-between items-center mb-10 px-4">
-            <div class="flex items-center gap-6">
-                <div class="h-16 w-16 bg-gradient-to-tr from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
-                   <i data-lucide="trophy" class="text-white w-10 h-10"></i>
+        <nav class="flex flex-col sm:flex-row justify-between items-center mb-6 lg:mb-10 px-4 gap-4">
+            <div class="flex items-center gap-4 lg:gap-6">
+                <div class="h-12 w-12 lg:h-16 lg:w-16 bg-gradient-to-tr from-yellow-400 to-yellow-600 rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+                   <i data-lucide="trophy" class="text-white w-6 h-6 lg:w-10 lg:h-10"></i>
                 </div>
                 <div>
-                    <h1 class="bebas text-5xl gold-bg-text leading-none">AUCTION ARENA</h1>
-                    <p class="text-[10px] text-gray-400 tracking-[0.3em] font-bold uppercase mt-1 opacity-60">College IPL Event 2026</p>
+                    <h1 class="bebas text-3xl lg:text-5xl gold-bg-text leading-none">AUCTION ARENA</h1>
+                    <p class="text-[8px] lg:text-[10px] text-gray-400 tracking-[0.3em] font-bold uppercase mt-1 opacity-60">College IPL Event 2026</p>
                 </div>
             </div>
-            <div class="flex items-center gap-4">
-                <div id="connection-status" class="flex items-center gap-2 bg-green-500/10 text-green-400 px-4 py-2 rounded-full text-xs font-bold border border-green-500/20">
-                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                    LIVE SYNC ACTIVE
+            <div class="flex flex-wrap items-center justify-center gap-2 lg:gap-4">
+                <div id="connection-status" class="flex items-center gap-2 bg-green-500/10 text-green-400 px-3 lg:px-4 py-1.5 lg:py-2 rounded-full text-[10px] lg:text-xs font-bold border border-green-500/20">
+                    <span class="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    LIVE SYNC
                 </div>
-                <div class="text-[10px] text-gray-400 font-mono transition-all" id="last-saved">Sync Header: Initializing...</div>
-                <div class="h-10 w-[1px] bg-white/10 mx-2"></div>
-                <button onclick="toggleSetup()" class="p-3 glass-card hover:bg-white/10 transition-all rounded-xl">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                </button>
-                <button onclick="resetAll()" class="p-3 glass-card hover:bg-red-900 border-red-500/30 rounded-xl">
-                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
-                </button>
+                <div class="text-[8px] lg:text-[10px] text-gray-400 font-mono transition-all" id="last-saved">Sync Header: Initializing...</div>
+                <div class="h-6 w-[1px] bg-white/10 mx-1 lg:mx-2 hidden sm:block"></div>
+                <div class="flex gap-2">
+                    <button onclick="toggleSetup()" class="p-2 lg:p-3 glass-card hover:bg-white/10 transition-all rounded-lg lg:rounded-xl">
+                        <i data-lucide="settings" class="w-4 h-4 lg:w-5 lg:h-5"></i>
+                    </button>
+                    <button onclick="resetAll()" class="p-2 lg:p-3 glass-card hover:bg-red-900 border-red-500/30 rounded-lg lg:rounded-xl">
+                        <i data-lucide="refresh-cw" class="w-4 h-4 lg:w-5 lg:h-5"></i>
+                    </button>
+                </div>
             </div>
         </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
             <!-- LEFT: LEADERBOARD -->
-            <div class="lg:col-span-3">
-                <div class="flex items-center justify-between mb-6 px-2">
-                    <h3 class="bebas text-2xl text-gray-400 uppercase">Team Purse</h3>
-                    <span id="team-count" class="bg-primary/20 text-primary text-[10px] font-bold px-3 py-1 rounded-full border border-primary/30">0 TEAMS</span>
+            <div class="lg:col-span-3 order-3 lg:order-1">
+                <div class="flex items-center justify-between mb-4 lg:mb-6 px-2">
+                    <h3 class="bebas text-xl lg:text-2xl text-gray-400 uppercase">Team Purse</h3>
+                    <span id="team-count" class="bg-primary/20 text-primary text-[8px] lg:text-[10px] font-bold px-3 py-1 rounded-full border border-primary/30">0 TEAMS</span>
                 </div>
-                <div id="teams-list" class="space-y-3 max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
+                <div id="teams-list" class="space-y-3 max-h-[400px] lg:max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- Teams will be injected here -->
                 </div>
             </div>
 
             <!-- CENTER: MAIN DISPLAY -->
-            <div class="lg:col-span-6 space-y-8">
+            <div class="lg:col-span-6 space-y-6 lg:order-2">
                 <!-- DASHBOARD CONTROLS -->
                 <div class="glass-card p-2 flex gap-2 items-center justify-between bg-[#1A2235]">
                     <div class="flex gap-2">
@@ -197,8 +199,17 @@
                             <i data-lucide="chevron-right" class="w-6 h-6"></i>
                         </button>
                     </div>
+                    
+                    <!-- Search Feature -->
+                    <div class="flex-1 max-w-[400px] hidden md:flex items-center bg-black/20 rounded-xl px-4 border border-white/5">
+                        <i data-lucide="search" class="w-4 h-4 text-gray-500 mr-2"></i>
+                        <input type="text" id="player-search" class="w-full bg-transparent border-none text-xs p-2 text-white" 
+                               placeholder="Find Player..." onkeyup="filterJump(event)">
+                        <div id="search-results" class="absolute top-full left-0 right-0 glass-card mt-2 hidden z-50 max-h-[300px] overflow-y-auto"></div>
+                    </div>
+
                     <div class="flex items-center bg-black/40 rounded-xl px-4 py-2 gap-4 border border-white/10">
-                        <span class="text-[10px] font-bold text-gray-500 uppercase">Slide No</span>
+                        <span class="text-[10px] font-bold text-gray-500 uppercase">Sno Jump</span>
                         <input type="number" id="jump-sno" class="w-16 h-10 p-0 text-center bg-transparent border-none text-xl bebas font-bold text-white" placeholder="0">
                         <button onclick="jumpToPlayer()" class="action-btn-solid px-4 h-10 rounded-lg text-xs font-black uppercase transition-all">
                             JUMP
@@ -207,30 +218,30 @@
                 </div>
 
                 <!-- PLAYER CARD -->
-                <div id="player-card" class="glass-card relative overflow-hidden min-h-[500px] group flex flex-col items-center justify-center text-center p-12">
+                <div id="player-card" class="glass-card relative overflow-hidden min-h-[350px] lg:min-h-[500px] group flex flex-col items-center justify-center text-center p-6 lg:p-12">
                     <div id="sold-animation-container" class="absolute inset-0 flex items-center justify-center pointer-events-none"></div>
                     <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none"></div>
                     <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px]"></div>
                     <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-red-500/10 rounded-full blur-[100px]"></div>
 
                     <div class="relative w-full" id="player-card-content">
-                        <span class="bebas text-gray-500 text-3xl opacity-50 mb-2 block tracking-widest" id="display-sno">S.NO 00</span>
-                        <h2 id="display-name" class="text-7xl lg:text-8xl font-black uppercase tracking-tight gold-bg-text mb-6 leading-tight drop-shadow-lg">
+                        <span class="bebas text-gray-500 text-xl lg:text-3xl opacity-50 mb-2 block tracking-widest" id="display-sno">S.NO 00</span>
+                        <h2 id="display-name" class="text-4xl sm:text-5xl lg:text-8xl font-black uppercase tracking-tight gold-bg-text mb-4 lg:mb-6 leading-tight drop-shadow-lg">
                            PLAYER NAME
                         </h2>
                         
-                        <div id="display-role" class="mb-10 inline-flex items-center gap-2">
-                            <span class="player-badge role-allrounder text-sm px-6 py-2 shadow-xl">ALL ROUNDER</span>
+                        <div id="display-role" class="mb-6 lg:mb-10 inline-flex items-center gap-2">
+                            <span class="player-badge role-allrounder text-xs lg:text-sm px-4 lg:px-6 py-2 shadow-xl">ALL ROUNDER</span>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-12 w-full max-w-lg mx-auto border-t border-white/5 pt-10">
+                        <div class="grid grid-cols-2 gap-6 lg:gap-12 w-full max-w-lg mx-auto border-t border-white/5 pt-6 lg:pt-10">
                             <div class="text-center group">
-                                <p class="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold mb-2 group-hover:text-primary transition-all">Role Points</p>
-                                <p id="display-points" class="bebas text-5xl">75</p>
+                                <p class="text-[8px] lg:text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold mb-1 lg:mb-2 group-hover:text-primary transition-all">Role Points</p>
+                                <p id="display-points" class="bebas text-3xl lg:text-5xl">75</p>
                             </div>
                             <div class="text-center group">
-                                <p class="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold mb-2 group-hover:text-primary transition-all">Base Price</p>
-                                <p id="display-base" class="bebas text-5xl text-primary">₵ 100K</p>
+                                <p class="text-[8px] lg:text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold mb-1 lg:mb-2 group-hover:text-primary transition-all">Base Price</p>
+                                <p id="display-base" class="bebas text-3xl lg:text-5xl text-primary">₵ 100K</p>
                             </div>
                         </div>
                     </div>
@@ -278,9 +289,9 @@
             </div>
 
             <!-- RIGHT: RECENT ACTIVITY -->
-            <div class="lg:col-span-3">
-                <h3 class="bebas text-2xl text-gray-400 uppercase mb-6 px-2">Deal History</h3>
-                <div id="roster-feed" class="space-y-4 max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
+            <div class="lg:col-span-3 lg:order-3">
+                <h3 class="bebas text-xl lg:text-2xl text-gray-400 uppercase mb-4 lg:mb-6 px-2">Deal History</h3>
+                <div id="roster-feed" class="space-y-4 max-h-[300px] lg:max-h-[750px] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- History will be injected here -->
                 </div>
                 <div class="mt-8 pt-6 border-t border-white/5 p-2">
@@ -500,10 +511,29 @@
         }
 
         function renderUI() {
-            const p = players[currentIndex];
             const content = document.getElementById('player-card-content');
             
-            if(!p || currentIndex >= players.length) {
+            // Handle Introduction Slides
+            if (currentIndex === -2 || currentIndex === -1) {
+                content.innerHTML = `
+                    <div class="text-center py-20 animate-fade-in">
+                        <i data-lucide="presentation" class="w-24 h-24 text-primary mx-auto mb-6"></i>
+                        <h2 class="bebas text-6xl gold-bg-text mb-4 uppercase">Introduction Phase</h2>
+                        <p class="text-gray-500 font-bold uppercase tracking-widest mb-10">Showing Slide ${currentIndex === -2 ? '1' : '2'} on the Live Display</p>
+                        <div class="flex flex-col items-center gap-4">
+                            <span class="text-xs text-gray-400">Manage the auction from here once slides are done.</span>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('display-sno').innerText = `INTRO ${currentIndex === -2 ? '01' : '02'}`;
+                document.getElementById('display-name').innerText = currentIndex === -2 ? "WELCOME" : "GUIDELINES";
+                lucide.createIcons();
+                return;
+            }
+
+            const p = players[currentIndex];
+            
+            if(!p || (currentIndex >= players.length && players.length > 0)) {
                 content.innerHTML = `
                     <div class="text-center py-20 animate-fade-in">
                         <i data-lucide="award" class="w-24 h-24 text-primary mx-auto mb-6"></i>
@@ -626,15 +656,15 @@
                 t.remainingBudget -= price; 
             }
 
-            // Sync in background
+            // Sync in background (This updates the Live Display immediately)
             saveData(); 
             
-            // Move to next player after animation
+            // STAY on the current player for 2 seconds so the Sold message shows on the CORRECT slide
             setTimeout(() => {
                 overlay.remove();
-                nextPlayer();
+                nextPlayer(); // Now move to the next slide/player
                 window.isProcessing = false;
-            }, 1000);
+            }, 2000);
         }
 
         function markUnsold() { 
@@ -644,8 +674,12 @@
             window.isProcessing = true;
             p.status = 'unsold'; 
             saveData(); 
-            nextPlayer(); 
-            window.isProcessing = false;
+            
+            // Show Unsold for 2 seconds before moving
+            setTimeout(() => {
+                nextPlayer(); 
+                window.isProcessing = false;
+            }, 2000);
         }
 
         async function saveData() { 
@@ -682,20 +716,20 @@
         }
 
         function nextPlayer() { 
-            // Optional: Skip already sold/unsold players when clicking next?
-            // For now, just move the index
             if(currentIndex < players.length - 1) { 
                 currentIndex++; 
                 renderUI(); 
+                saveData();
             } else {
-                renderUI(); // Re-render to show "End" state if needed
+                renderUI(); 
             }
         }
 
         function prevPlayer() { 
-            if(currentIndex > 0) { 
+            if(currentIndex > -2) { 
                 currentIndex--; 
                 renderUI(); 
+                saveData();
             } 
         }
 
@@ -705,8 +739,28 @@
             if(idx !== -1) { 
                 currentIndex = idx; 
                 renderUI(); 
+                saveData();
             } else {
                 alert("Player S.No " + sno + " not found!");
+            }
+        }
+
+        // New Search Function
+        function filterJump(e) {
+            const val = e.target.value.toLowerCase().trim();
+            if(!val) return;
+            
+            // Search by name or Sno
+            const idx = players.findIndex(p => 
+                p.name.toLowerCase().includes(val) || 
+                String(p.sno).includes(val)
+            );
+
+            if(idx !== -1 && e.key === 'Enter') {
+                currentIndex = idx;
+                renderUI();
+                saveData();
+                e.target.value = '';
             }
         }
 
@@ -714,9 +768,13 @@
             if(!players.length || !teams.length) return alert("Please upload players and teams first!");
             document.getElementById('setup-overlay').classList.add('hidden');
             document.getElementById('app').classList.remove('hidden');
-            if(currentIndex === -1) currentIndex = 0;
+            if(currentIndex === -1 || currentIndex === -2) {
+                // Intro mode
+            } else if(currentIndex === -100) {
+                 currentIndex = 0;
+            }
             renderUI();
-            saveData(); // Sync initial state
+            saveData(); 
         }
         function toggleSetup() { document.getElementById('setup-overlay').classList.toggle('hidden'); document.getElementById('close-setup-btn').classList.toggle('hidden'); }
         function closeSetup() { document.getElementById('setup-overlay').classList.add('hidden'); }
