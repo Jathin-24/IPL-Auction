@@ -195,13 +195,13 @@
                 if (idx === -2) {
                     slideIndex = 1;
                 } else if (idx === -1) {
-                    slideIndex = 2;
+                    slideIndex = 1; 
                 } else if (idx >= 0 && auctionData.players) {
                     player = auctionData.players[idx];
                     if (player) {
-                        // Use ARRAY INDEX for slide mapping, not sno
-                        // Player at index 0 = slide 3, index 1 = slide 4, etc.
-                        slideIndex = idx + 3;
+                        // Re-adjusted mapping: idx 0 (First Player) = slide_2
+                        // This assumes slide_1 is an intro slide.
+                        slideIndex = idx + 2;
                     }
                 }
             }

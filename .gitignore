@@ -15,3 +15,6 @@ RUNNING.txt
 .DS_Store
 .vscode/
 .idea/
+
+# Large Files
+IPL_slides_ui_and_logic/IPL AUCTION KITS.pdf

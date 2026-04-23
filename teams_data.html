@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams Roster - IPL Auction 2026</title>
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --secondary: #0A192F;
+            --accent: #E31D23;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #050A18;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .bebas { font-family: 'Bebas Neue', cursive; letter-spacing: 2px; }
+        
+        .gold-bg-text {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 10px; }
+
+        .role-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .role-bowler { background: #10B981; }
+        .role-batsman { background: #EF4444; }
+        .role-allrounder { background: #3B82F6; }
+        .role-wk { background: #F59E0B; }
+    </style>
+</head>
+<body class="p-4 md:p-8 lg:p-12">
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-12 flex justify-between items-center">
+        <div class="flex items-center gap-6">
+            <div class="h-16 w-16 bg-gradient-to-tr from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-2xl border-2 border-yellow-200/50">
+               <i data-lucide="users" class="text-white w-10 h-10"></i>
+            </div>
+            <div>
+                <h1 class="bebas text-5xl gold-bg-text leading-none">TEAM ROSTERS</h1>
+                <p class="text-xs text-gray-400 tracking-[0.4em] font-bold uppercase mt-2">Live Financials & Squads</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <div id="sync-status" class="flex items-center gap-2 bg-green-500/10 text-green-400 px-4 py-2 rounded-full text-xs font-bold border border-green-500/20">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                SYNC ACTIVE
+            </div>
+            <p id="last-updated" class="text-[10px] text-gray-500 font-mono mt-2">Initializing...</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="teams-grid" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <!-- Team cards will be injected here -->
+        <div class="col-span-full py-20 text-center animate-pulse">
+            <i data-lucide="loader-2" class="w-12 h-12 text-primary mx-auto mb-4 animate-spin"></i>
+            <p class="bebas text-2xl text-gray-500">Connecting to Auction Server...</p>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let lastDataStr = "";
+
+        async function fetchState() {
+            try {
+                const res = await fetch('http://localhost:5000/state');
+                if (res.ok) {
+                    const data = await res.json();
+                    const dataStr = JSON.stringify(data);
+                    
+                    if (dataStr !== lastDataStr) {
+                        updateUI(data);
+                        lastDataStr = dataStr;
+                    }
+                    
+                    document.getElementById('sync-status').innerText = "SYNC ACTIVE";
+                    document.getElementById('sync-status').className = "flex items-center gap-2 bg-green-500/10 text-green-400 px-4 py-2 rounded-full text-xs font-bold border border-green-500/20";
+                    document.getElementById('last-updated').innerText = `Last Updated: ${new Date().toLocaleTimeString()}`;
+                }
+            } catch (err) {
+                document.getElementById('sync-status').innerText = "SERVER DISCONNECTED";
+                document.getElementById('sync-status').className = "flex items-center gap-2 bg-red-500/10 text-red-400 px-4 py-2 rounded-full text-xs font-bold border border-red-500/20";
+            }
+        }
+
+        function updateUI(data) {
+            const grid = document.getElementById('teams-grid');
+            if (!data.teams || data.teams.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-gray-500 bebas text-3xl">No teams found in auction session.</div>';
+                return;
+            }
+
+            grid.innerHTML = data.teams.map(team => {
+                const teamPlayers = data.players.filter(p => p.soldTo === team.name && p.status === 'sold');
+                const spent = teamPlayers.reduce((sum, p) => sum + (p.soldPrice || 0), 0);
+                const remaining = team.initialBudget - spent;
+
+                return `
+                    <div class="glass-card overflow-hidden flex flex-col h-[500px]">
+                        <!-- Team Header -->
+                        <div class="p-6 border-b border-white/10 bg-gradient-to-r from-white/5 to-transparent">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="bebas text-3xl text-white tracking-widest">${team.name}</h3>
+                                <div class="bg-primary/20 text-primary px-3 py-1 rounded-lg border border-primary/30 text-[10px] font-black uppercase">
+                                    ${teamPlayers.length} Players
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-black/20 p-3 rounded-xl border border-white/5">
+                                    <p class="text-[8px] text-gray-500 font-black uppercase tracking-widest mb-1">Spent</p>
+                                    <p class="bebas text-2xl text-red-400">₵ ${spent}</p>
+                                </div>
+                                <div class="bg-primary/10 p-3 rounded-xl border border-primary/20">
+                                    <p class="text-[8px] text-primary/70 font-black uppercase tracking-widest mb-1">Remaining</p>
+                                    <p class="bebas text-2xl gold-bg-text">₵ ${remaining}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Player List -->
+                        <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-3">
+                            ${teamPlayers.length > 0 ? teamPlayers.map(p => {
+                                const role = (p.role || '').toLowerCase();
+                                let roleCls = 'role-allrounder';
+                                if(role.includes('bat')) roleCls = 'role-batsman';
+                                else if(role.includes('bowl')) roleCls = 'role-bowler';
+                                else if(role.includes('wk') || role.includes('keep')) roleCls = 'role-wk';
+
+                                return `
+                                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-gray-500 border border-white/10">
+                                                #${p.sno}
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-bold uppercase tracking-tight">${p.name}</p>
+                                                <span class="role-badge ${roleCls}">${p.role}</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="bebas text-lg text-primary leading-none">₵ ${p.soldPrice}</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('') : `
+                                <div class="h-full flex flex-col items-center justify-center opacity-20 py-10">
+                                    <i data-lucide="shield-alert" class="w-12 h-12 mb-2"></i>
+                                    <p class="bebas text-xl">Squad Empty</p>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <!-- Footer / Progress Bar -->
+                        <div class="px-6 py-4 bg-black/20 border-t border-white/10">
+                            <div class="flex justify-between text-[8px] font-black uppercase tracking-widest text-gray-500 mb-2">
+                                <span>Budget Utilization</span>
+                                <span>${Math.round((spent / team.initialBudget) * 100)}%</span>
+                            </div>
+                            <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-yellow-500 to-red-500" style="width: ${Math.min(100, (spent / team.initialBudget) * 100)}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            lucide.createIcons();
+        }
+
+        // Initial fetch and set interval
+        fetchState();
+        setInterval(fetchState, 2000);
+    </script>
+</body>
+</html>
